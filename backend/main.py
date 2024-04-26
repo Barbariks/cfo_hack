@@ -4,6 +4,7 @@ from py_pdf_parser.loaders import load_file as LoadPDF
 from pathlib import Path
 from bs4 import BeautifulSoup as Soup
 import requests
+import validators
 
 
 buffer_directory = "pdf_buffer/"
@@ -22,36 +23,35 @@ def process_text(request : Request, text : str):
 
 @app.post("/process_pdf")
 def process_pdf(request : Request, pdf : UploadFile = File(...)):
-    #check {pdf}
     with open(pdf_buffer_path, "wb") as file:
         file.write(pdf.file.read())
-    #check {file}
 
     pdf_doc = LoadPDF(pdf_buffer_path)
-    #check {pdf_doc}
 
     text = ' '.join([element.text() for element in pdf_doc.elements])
-    with open('tmp.txt', 'w', encoding='utf-8') as file:
-        file.write(text)
 
     return {"message": "success"}
 
 @app.post("/process_url")
 def process_url(request : Request, url : str):
-    #check {url}
+    if not validators.url(url):
+        return {'error': 'invalid url'}
 
-    r = requests.get(url, headers=fake_headers)
-    #check {r}
+    try:
+        r = requests.get(url, headers=fake_headers)
+    except:
+        return {'error': f'could not make request for {url}'}
+    
+    if r.status_code != 200:
+        return {'error': f'status code {r.status_code}'}
 
     soup = Soup(r.text, 'html.parser')
 
-    test = soup.get('vacancy-description')
-    print(test)
+    test = soup.find('div', {'data-qa': 'vacancy-description'})
 
-    info = soup.find_all('strong')
-    print(info)
-    # text = info.text
-    # with open('tmp.txt', 'w', encoding='utf-8') as file:
-    #     file.write(text)
+    if test is None:
+        return {'error': 'invalid url page'}
+    
+    text = test.get_text(separator=' ')
 
     return {'message': 'success'}
