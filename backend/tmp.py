@@ -29,6 +29,7 @@ with open('dataset.csv', 'w', newline='') as file:
         test = soup.find('div', {'data-qa': 'vacancy-description'})
 
         if test is None:
+            print(i)
             continue
 
         writer.writerow([cur_product, test.get_text(separator=' ')])
