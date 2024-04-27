@@ -1,2 +1,8 @@
-__pycache__/
-pdf_buffer/
+backend/label_encoder.pkl
+backend/model_CFO_sd.pth
+.gitignore
+backend/__pycache__/TextClassifier.cpython-311.pyc
+backend/__pycache__/text_classifier.cpython-311.pyc
+backend/__pycache__/pdf.cpython-311.pyc
+backend/__pycache__/main.cpython-311.pyc
+backend/__pycache__/hh_parse.cpython-311.pyc

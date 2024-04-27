@@ -1,60 +1,52 @@
-from fastapi import FastAPI, UploadFile, File, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from py_pdf_parser.loaders import load_file as LoadPDF
-from pathlib import Path
-import validators
-import selenium.webdriver
-from selenium.webdriver.common.by import By
 
-buffer_directory = "pdf_buffer/"
-pdf_buffer_path = buffer_directory + "file.pdf"
+from pdf import get_text_from_pdf, create_pdf_from_b64
+from hh_parse import Parser
+from text_classifier import predict_url
 
-xpath_vacancy_archive_button = '//*[@id="HH-React-Root"]/div/div/div[4]/div[1]/div/div/div/div/div/div[3]/div/button'
-xpath_vacancy_description = '//*[@id="HH-React-Root"]/div/div/div[4]/div[1]/div/div/div/div/div/div[4]/div/div/div[1]/div'
+parser = Parser()
+def lifespan(app: FastAPI):
+    global parser
+    yield
+    del parser
 
-Path(buffer_directory).mkdir(exist_ok=True) 
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 app.add_middleware( CORSMiddleware, allow_origins=['*'] )
 
-driver = selenium.webdriver.Firefox()
-
 @app.post("/process_text")
-def process_text(request : Request, text : str):
-    return {'message': text}
+def process_text(request : Request):
+    json = request.json()
+    text = json['text_vac']
+
+    output = predict_url(text)
+
+    return {'message': 'success'}
 
 @app.post("/process_pdf")
-def process_pdf(request : Request, pdf : UploadFile = File(...)):
-    with open(pdf_buffer_path, "wb") as file:
-        file.write(pdf.file.read())
+def process_pdf(request : Request):
+    json = request.json()
+    b64_file = json['file_content']
 
-    pdf_doc = LoadPDF(pdf_buffer_path)
+    pdf_path = create_pdf_from_b64(b64_file)
 
-    text = ' '.join([element.text() for element in pdf_doc.elements])
+    text = get_text_from_pdf(pdf_path)
 
-    return {'message': text}
+    output = predict_url(text)
+
+    return {'message': 'success'}
 
 @app.post("/process_url")
 def process_url(request : Request, url : str):
-    if not validators.url(url):
-        return {'error': 'invalid url'}
+    # json = request.json()
+    # url = json['url_vac']
 
     try:
-        driver.get(url)
-    except:
-        return {'error': 'error while processing url'}
-    
-    try:
-        button = driver.find_element(By.XPATH, xpath_vacancy_archive_button)
-        button.click()
-    except:
-        pass
+        text = parser.parse(url)
 
-    try:
-        description = driver.find_element(By.XPATH, xpath_vacancy_description)
+        output = predict_url(text)
 
-        text = description.text
-    except:
-        return {'error': 'could not find vacancy description'}
-
-    return {'message': text}
+        return {'message': output}
+    except Exception as e:
+        return {'error': e}
