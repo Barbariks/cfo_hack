@@ -4,5 +4,11 @@
 
 ```pip install -r requirements.txt```
 
+**Windows**
+
+```cd /backend && uvicorn main:app --port 8000 && cd .. && streamlit run frontend/main.py```
+
+**Unix/Linux**
+
 Далее запускаем bash файл для Unix систем
 ```./strart.sh```
