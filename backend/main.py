@@ -6,9 +6,11 @@ import validators
 import selenium.webdriver
 from selenium.webdriver.common.by import By
 
-
 buffer_directory = "pdf_buffer/"
 pdf_buffer_path = buffer_directory + "file.pdf"
+
+xpath_vacancy_archive_button = '//*[@id="HH-React-Root"]/div/div/div[4]/div[1]/div/div/div/div/div/div[3]/div/button'
+xpath_vacancy_description = '//*[@id="HH-React-Root"]/div/div/div[4]/div[1]/div/div/div/div/div/div[4]/div/div/div[1]/div'
 
 Path(buffer_directory).mkdir(exist_ok=True) 
 
@@ -43,13 +45,13 @@ def process_url(request : Request, url : str):
         return {'error': 'error while processing url'}
     
     try:
-        button = driver.find_element(By.XPATH, '//*[@id="HH-React-Root"]/div/div/div[4]/div[1]/div/div/div/div/div/div[3]/div/button')
+        button = driver.find_element(By.XPATH, xpath_vacancy_archive_button)
         button.click()
     except:
         pass
 
     try:
-        description = driver.find_element(By.XPATH, '//*[@id="HH-React-Root"]/div/div/div[4]/div[1]/div/div/div/div/div/div[4]/div/div/div[1]/div')
+        description = driver.find_element(By.XPATH, xpath_vacancy_description)
 
         text = description.text
     except:
