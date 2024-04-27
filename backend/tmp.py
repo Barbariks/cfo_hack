@@ -11,7 +11,7 @@ df = pd.read_excel('dataset.xlsx')
 product_id = df['Название продукта ']
 urls_col = df['Список вакансий']
 cur_product = product_id[0]
-#ale
+
 with open('dataset.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     
