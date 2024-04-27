@@ -4,8 +4,8 @@ echo "Запуск приложения..."
 
 apt install python3-pip
 
-cd /backend
 pip install -r requirements.txt
+cd /backend
 uvicorn main:app --port 8000
 cd ..
 
