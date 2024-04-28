@@ -1,12 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "Запуск приложения..."
 
-apt install python3-pip
+# apt install python3-pip
 
 pip install -r requirements.txt
-cd /backend
-uvicorn main:app --port 8000
-cd ..
 
-streamlit run frontend/main.py
+(cd frontend && streamlit run main.py) & (cd backend && uvicorn main:app) && fg
