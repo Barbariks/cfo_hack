@@ -15,18 +15,6 @@
 * Python 3.x, x >= 9
 * venv
 ### Команды
-```commandline
-cd backhacks
-pip install -r requirements.txt
-uvicorn main:app --reload 
-```
-### Итог
-Поднят backend по адресу `http://127.0.0.1:8000/`
-
-## Поднятие frontend веб-сервисa
-### Требования
-* npm (менеджер пакетов)
-### Команды
 Чтобы корректно запустить наше решение надо скачать все зависимости, так же эта строчка прописана в bash скрипте, по этому она не обязательна на данном этапе
 
 ```pip install -r requirements.txt```
