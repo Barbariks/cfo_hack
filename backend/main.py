@@ -1,9 +1,14 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from pdf import get_text_from_pdf, create_pdf_from_b64
 from hh_parse import Parser
-from text_classifier import predict_url
+from text_classifier import ensemble_predict
+from course_config import get_course_data
+
+class URLItem(BaseModel):
+    url_vac : str
 
 parser = Parser()
 def lifespan(app: FastAPI):
@@ -16,37 +21,33 @@ app = FastAPI(lifespan=lifespan)
 app.add_middleware( CORSMiddleware, allow_origins=['*'] )
 
 @app.post("/process_text")
-def process_text(request : Request):
-    json = request.json()
+async def process_text(request : Request):
+    json = await request.json()
     text = json['text_vac']
 
-    output = predict_url(text)
+    output = ensemble_predict(text)
 
-    return {'message': 'success'}
+    return get_course_data(output)
 
 @app.post("/process_pdf")
-def process_pdf(request : Request):
-    json = request.json()
+async def process_pdf(request : Request):
+    json = await request.json()
     b64_file = json['file_content']
 
     pdf_path = create_pdf_from_b64(b64_file)
 
     text = get_text_from_pdf(pdf_path)
 
-    output = predict_url(text)
+    output = ensemble_predict(text)
 
-    return {'message': 'success'}
+    return get_course_data(output)
 
 @app.post("/process_url")
-def process_url(request : Request, url : str):
-    # json = request.json()
-    # url = json['url_vac']
+async def process_url(request : Request):
+    json = await request.json()
+    url = json['url_vac']
 
-    try:
-        text = parser.parse(url)
+    text = parser.parse(url)
+    output = ensemble_predict(text)
 
-        output = predict_url(text)
-
-        return {'message': output}
-    except Exception as e:
-        return {'error': e}
+    return get_course_data(output)

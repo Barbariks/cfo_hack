@@ -236,23 +236,23 @@ def output(data):
             url = data["parsedBody"]["url_vac"]   #ссылка на курс
             url = str(url)
 
-            # long = data["parsedBody"]["time"]  #длительность обучения
-            # long = str(long)
+            long = data["parsedBody"]["time"]  #длительность обучения
+            long = str(long) + '.'
 
-            # cost = data["parsedBody"]["cost"]   #стоимость
-            # cost = str(cost)
+            cost = data["parsedBody"]["cost"]   #стоимость
+            cost = str(cost)
 
-            # forma = data["parsedBody"]["forma"] #формат обучения
-            # forma = str(forma)
+            forma = data["parsedBody"]["forma"] #формат обучения
+            forma = str(forma) + '.'
 
-            # desc = data["parsedBody"]["desc"]   #описание
-            # desc = str(desc)
+            desc = data["parsedBody"]["desc"]   #описание
+            desc = str(desc) + '.'
 
             st.write("Ссылка на курс: " + url)
 
-            st.write("Длительность курса " + long)
+            st.write("Длительность курса: " + long)
 
-            st.write("Стоимость обучения от " + cost +" ₽")
+            st.write("Стоимость обучения от: " + cost)
 
             st.write("Формат обучения: " + forma)
 
@@ -316,7 +316,7 @@ if select == 'Загрузить PDF':
         df = extract_data(uploaded_file)
         if st.button("Найти по PDF"):
             data_to_send = df
-            response = requests.post('https://echo.free.beeceptor.com', json=data_to_send)
+            response = requests.post('http://127.0.0.1:8000/process_pdf', json=data_to_send)
 
             data = response.json()
             output(data)
@@ -329,7 +329,7 @@ if select == 'Вставить ссылку на вакансию':
         data_to_send = {
             "url_vac": url_vac
         }
-        response = requests.post('https://echo.free.beeceptor.com', json=data_to_send)
+        response = requests.post('http://127.0.0.1:8000/process_url', json=data_to_send)
         print(response.text)
 
         data = response.json()
@@ -341,7 +341,7 @@ if select == 'Ввести текстовое описание вакансии'
         data_to_send = {
             "text_vac": text_desc_vac
         }
-        response = requests.post('https://echo.free.beeceptor.com', json=data_to_send)
+        response = requests.post('http://127.0.0.1:8000/process_text', json=data_to_send)
 
         data = response.json()
         output(data)

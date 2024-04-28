@@ -1,13 +1,15 @@
-import selenium.webdriver
+from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
 import validators
 
 xpath_vacancy_archive_button    = '//*[@id="HH-React-Root"]/div/div/div[4]/div[1]/div/div/div/div/div/div[3]/div/button'
-xpath_vacancy_description       = '//*[@id="HH-React-Root"]/div/div/div[4]/div[1]/div/div/div/div/div/div[4]/div/div/div[1]/div'
+xpath_vacancy_description       = "//div[@data-qa='vacancy-description']"
 
 class Parser():
     def __init__(self):
-        self.driver = selenium.webdriver.Firefox()
+        options = webdriver.SafariOptions()
+        self.driver = webdriver.Safari(options=options)
 
     def __del__(self):
         self.driver.quit()
@@ -19,7 +21,7 @@ class Parser():
         try:
             self.driver.get(url)
         except:
-            raise Exception(f'error while processing url: {url}')
+            raise Exception(f'бляяяя')
 
         try:
             button = self.driver.find_element(By.XPATH, xpath_vacancy_archive_button)
