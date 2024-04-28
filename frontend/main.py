@@ -275,7 +275,6 @@ def output(data):
             st.write(desc)
             fig = plt.figure()
             plt.bar(prof, num_prof)
-            plt.xticks(rotation=45)
             st.write(fig)
             otziv = """
             <style>
