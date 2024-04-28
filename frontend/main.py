@@ -5,7 +5,7 @@ from pathlib import Path
 import logging
 import base64
 import json
-from matplotlib import pyplot as plt
+
 
 
 # def get_project_root() -> str:
@@ -248,9 +248,6 @@ def output(data):
             desc = data["parsedBody"]["desc"]   #описание
             desc = str(desc) + '.'
 
-            prof = data["parsedBody"]["professions"]  # профессии
-            num_prof = data["parsedBody"]["num_professions"]  # профессии
-
             st.write("Ссылка на курс: " + url)
 
             st.write("Длительность курса: " + long)
@@ -273,9 +270,7 @@ def output(data):
 
             st.markdown(bold_text, unsafe_allow_html=True)
             st.write(desc)
-            fig = plt.figure()
-            plt.bar(prof, num_prof)
-            st.write(fig)
+
             otziv = """
             <style>
             .otziv{
